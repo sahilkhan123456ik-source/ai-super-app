@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Super App</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 480px; background-color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .auth-screen { padding: 30px 20px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; text-align: center; }
+        .logo { width: 70px; height: 70px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 20px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; }
+        .auth-title { font-size: 26px; font-weight: bold; margin-bottom: 8px; color: #fff; }
+        .auth-sub { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
+        .input-group { margin-bottom: 16px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 6px; }
+        .input-group input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #334155; background-color: #0f172a; color: #fff; font-size: 15px; outline: none; }
+        .btn-primary { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .main-screen { display: none; flex-direction: column; height: 100vh; }
+        .header { padding: 20px; background-color: #0f172a; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+        .header h2 { font-size: 20px; background: linear-gradient(135deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logout-btn { background: none; border: 1px solid #475569; color: #94a3b8; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+        .content { flex: 1; padding: 20px; overflow-y: auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card { background-color: #0f172a; border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; }
+        .card h3 { font-size: 16px; margin-bottom: 8px; color: #38bdf8; display: flex; align-items: center; gap: 8px; }
+        .card p { font-size: 13px; color: #94a3b8; margin-bottom: 14px; }
+        textarea, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background-color: #1e293b; color: #fff; font-size: 14px; margin-bottom: 12px; outline: none; }
+        .result-box { background-color: #1e293b; border-radius: 10px; padding: 12px; border: 1px dashed #475569; min-height: 80px; font-size: 13px; color: #cbd5e1; white-space: pre-wrap; }
+        .nav-bar { display: flex; background-color: #0f172a; border-top: 1px solid #334155; padding: 10px 0; position: sticky; bottom: 0; }
+        .nav-item { flex: 1; text-align: center; color: #64748b; font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item.active { color: #818cf8; font-weight: 600; }
+        .nav-icon { font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="authScreen" class="auth-screen">
+        <div class="logo">⚡</div>
+        <h1 class="auth-title">AI Super App</h1>
+        <p class="auth-sub">अपनी ईमेल से लॉगिन करके AI टूल्स इस्तेमाल करें</p>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="emailInput" placeholder="name@example.com" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="passInput" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-primary">Login / Sign Up</button>
+        </form>
+    </div>
+
+    <div id="mainScreen" class="main-screen">
+        <div class="header">
+            <h2>✨ AI Studio</h2>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+
+        <div class="content">
+            <div id="tab-video" class="tab-content active">
+                <div class="card">
+                    <h3>🎬 AI Video Script & Prompt</h3>
+                    <p>वीडियो का टॉपिक डालें, AI आपको पूरा स्क्रिप्ट और सीन बना कर देगा।</p>
+                    <textarea id="videoTopic" rows="3" placeholder="जैसे: Beautiful Swiss Alps travel video..."></textarea>
+                    <button class="btn-primary" onclick="generateVideoPrompt()">Generate Script</button>
+                </div>
+                <div class="card">
+                    <h3>📄 Generated Output</h3>
+                    <div id="videoResult" class="result-box">यहाँ आपकी वीडियो स्क्रिप्ट आएगी...</div>
+                </div>
+            </div>
+
+            <div id="tab-photo" class="tab-content">
+                <div class="card">
+                    <h3>🖼️ AI Image Generator Prompt</h3>
+                    <p>फोटो के लिए अपना आईडिया लिखें:</p>
+                    <textarea id="photoPrompt" rows="3" placeholder="जैसे: Futuristic AI city at night, highly detailed..."></textarea>
+                    <button class="btn-primary" onclick="generatePhotoPrompt()">Generate Image Prompt</button>
+                </div>
+                <div class="card">
+                    <h3>✨ Prompt Result</h3>
+                    <div id="photoResult" class="result-box">यहाँ AI इमेज प्रॉम्प्ट आएगा...</div>
+                </div>
+            </div>
+
+            <div id="tab-voice" class="tab-content">
+                <div class="card">
+                    <h3>🎙️ AI Voice Greeting Generator</h3>
+                    <p>किसी देश के लिए वॉयस मैसेज बनाएं:</p>
+                    <select id="countrySelect">
+                        <option value="Switzerland">Switzerland 🇨🇭</option>
+                        <option value="Pakistan">Pakistan 🇵🇰</option>
+                        <option value="China">China 🇨🇳</option>
+                        <option value="Turkiye">Turkiye 🇹🇷</option>
+                    </select>
+                    <button class="btn-primary" onclick="generateVoiceGreeting()">Create AI Voice Text</button>
+                </div>
+                <div class="card">
+                    <h3>🔊 Speech Text</h3>
+                    <div id="voiceResult" class="result-box">यहाँ वॉयस मैसेज आएगा...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-bar">
+            <div class="nav-item active" onclick="switchTab('video', this)">
+                <span class="nav-icon">🎥</span>
+                <span>Video</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('photo', this)">
+                <span class="nav-icon">🖼️</span>
+                <span>Photo</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('voice', this)">
+                <span class="nav-icon">🎙️</span>
+                <span>Voice</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('emailInput').value;
+        if(email) {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainScreen').style.display = 'flex';
+        }
+    }
+
+    function handleLogout() {
+        document.getElementById('mainScreen').style.display = 'none';
+        document.getElementById('authScreen').style.display = 'flex';
+    }
+
+    function switchTab(tabName, el) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('tab-' + tabName).classList.add('active');
+        el.classList.add('active');
+    }
+
+    function generateVideoPrompt() {
+        const topic = document.getElementById('videoTopic').value || "Scenic nature video";
+        document.getElementById('videoResult').innerText = "Scene 1: HD Shot of " + topic + "\nVoiceover: Welcome to an incredible journey!\nMusic: Cinematic background score.";
+    }
+
+    function generatePhotoPrompt() {
+        const prompt = document.getElementById('photoPrompt').value || "Beautiful landscape";
+        document.getElementById('photoResult').innerText = "Ultra-realistic 8K image, photorealistic lighting, cinematic view of: " + prompt;
+    }
+
+    function generateVoiceGreeting() {
+        const country = document.getElementById('countrySelect').value;
+        document.getElementById('voiceResult').innerText = "Welcome to " + country + "! Enjoy the breathtaking views and culture.";
+    }
+</script>
+
+</body>
+              </html>
+              
