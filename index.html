@@ -1,166 +1,376 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Super App</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; min-height: 100vh; }
-        .app-container { width: 100%; max-width: 480px; background-color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .auth-screen { padding: 30px 20px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; text-align: center; }
-        .logo { width: 70px; height: 70px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 20px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; }
-        .auth-title { font-size: 26px; font-weight: bold; margin-bottom: 8px; color: #fff; }
-        .auth-sub { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
-        .input-group { margin-bottom: 16px; text-align: left; }
-        .input-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 6px; }
-        .input-group input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #334155; background-color: #0f172a; color: #fff; font-size: 15px; outline: none; }
-        .btn-primary { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        .main-screen { display: none; flex-direction: column; height: 100vh; }
-        .header { padding: 20px; background-color: #0f172a; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-        .header h2 { font-size: 20px; background: linear-gradient(135deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .logout-btn { background: none; border: 1px solid #475569; color: #94a3b8; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; }
-        .content { flex: 1; padding: 20px; overflow-y: auto; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .card { background-color: #0f172a; border-radius: 16px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; }
-        .card h3 { font-size: 16px; margin-bottom: 8px; color: #38bdf8; display: flex; align-items: center; gap: 8px; }
-        .card p { font-size: 13px; color: #94a3b8; margin-bottom: 14px; }
-        textarea, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background-color: #1e293b; color: #fff; font-size: 14px; margin-bottom: 12px; outline: none; }
-        .result-box { background-color: #1e293b; border-radius: 10px; padding: 12px; border: 1px dashed #475569; min-height: 80px; font-size: 13px; color: #cbd5e1; white-space: pre-wrap; }
-        .nav-bar { display: flex; background-color: #0f172a; border-top: 1px solid #334155; padding: 10px 0; position: sticky; bottom: 0; }
-        .nav-item { flex: 1; text-align: center; color: #64748b; font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .nav-item.active { color: #818cf8; font-weight: 600; }
-        .nav-icon { font-size: 18px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaAI - Your AI Assistant</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #0b1020;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: #11182b;
+    border-right: 1px solid #26304a;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 35px;
+    color: #a78bfa;
+}
+
+.new-chat {
+    background: #252e48;
+    border: 1px solid #394564;
+    color: white;
+    padding: 13px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    text-align: left;
+}
+
+.new-chat:hover {
+    background: #34415f;
+}
+
+.sidebar-title {
+    color: #8d9ab5;
+    font-size: 12px;
+    margin: 30px 0 12px;
+}
+
+.history {
+    color: #c4cce0;
+    font-size: 14px;
+    line-height: 2.8;
+}
+
+.profile {
+    margin-top: auto;
+    border-top: 1px solid #29334c;
+    padding-top: 18px;
+    color: #cbd5e1;
+}
+
+/* Main */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.topbar {
+    height: 65px;
+    border-bottom: 1px solid #26304a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+}
+
+.model {
+    color: #c4b5fd;
+    font-size: 14px;
+}
+
+.status {
+    color: #86efac;
+    font-size: 12px;
+}
+
+.chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px 18px;
+}
+
+.welcome {
+    max-width: 750px;
+    margin: 75px auto 30px;
+    text-align: center;
+}
+
+.welcome h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
+    background: linear-gradient(90deg, #a78bfa, #60a5fa);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.welcome p {
+    color: #9caac4;
+    line-height: 1.6;
+}
+
+.messages {
+    max-width: 750px;
+    margin: auto;
+}
+
+.message {
+    padding: 15px 18px;
+    margin: 15px 0;
+    border-radius: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.user-message {
+    background: #273653;
+    margin-left: 12%;
+}
+
+.ai-message {
+    background: #151f35;
+    border: 1px solid #293650;
+    margin-right: 8%;
+}
+
+.message-name {
+    color: #a78bfa;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+/* Input */
+.input-section {
+    padding: 15px 18px 20px;
+}
+
+.input-box {
+    max-width: 750px;
+    margin: auto;
+    background: #151f35;
+    border: 1px solid #394564;
+    border-radius: 16px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-box textarea {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 15px;
+    min-height: 35px;
+    max-height: 120px;
+    padding: 8px;
+    font-family: inherit;
+}
+
+.input-box textarea::placeholder {
+    color: #8492ad;
+}
+
+.send-btn {
+    background: #8b5cf6;
+    border: none;
+    color: white;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.send-btn:hover {
+    background: #7c3aed;
+}
+
+.note {
+    text-align: center;
+    color: #77849d;
+    font-size: 11px;
+    margin-top: 12px;
+}
+
+@media (max-width: 650px) {
+    .sidebar {
+        display: none;
+    }
+
+    .welcome {
+        margin-top: 55px;
+    }
+
+    .welcome h1 {
+        font-size: 29px;
+    }
+
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .user-message {
+        margin-left: 5%;
+    }
+
+    .ai-message {
+        margin-right: 3%;
+    }
+}
+</style>
 </head>
+
 <body>
 
-<div class="app-container">
-    <div id="authScreen" class="auth-screen">
-        <div class="logo">⚡</div>
-        <h1 class="auth-title">AI Super App</h1>
-        <p class="auth-sub">अपनी ईमेल से लॉगिन करके AI टूल्स इस्तेमाल करें</p>
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" id="emailInput" placeholder="name@example.com" required>
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="passInput" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn-primary">Login / Sign Up</button>
-        </form>
-    </div>
+<div class="app">
 
-    <div id="mainScreen" class="main-screen">
-        <div class="header">
-            <h2>✨ AI Studio</h2>
-            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    <aside class="sidebar">
+        <div class="logo">✦ NovaAI</div>
+
+        <button class="new-chat" onclick="newChat()">
+            + New Chat
+        </button>
+
+        <div class="sidebar-title">YOUR WORKSPACE</div>
+
+        <div class="history">
+            💬 AI Chat<br>
+            🎨 Image Studio<br>
+            📚 Learning<br>
+            💻 Coding<br>
+            📄 Files
         </div>
 
-        <div class="content">
-            <div id="tab-video" class="tab-content active">
-                <div class="card">
-                    <h3>🎬 AI Video Script & Prompt</h3>
-                    <p>वीडियो का टॉपिक डालें, AI आपको पूरा स्क्रिप्ट और सीन बना कर देगा।</p>
-                    <textarea id="videoTopic" rows="3" placeholder="जैसे: Beautiful Swiss Alps travel video..."></textarea>
-                    <button class="btn-primary" onclick="generateVideoPrompt()">Generate Script</button>
-                </div>
-                <div class="card">
-                    <h3>📄 Generated Output</h3>
-                    <div id="videoResult" class="result-box">यहाँ आपकी वीडियो स्क्रिप्ट आएगी...</div>
-                </div>
-            </div>
-
-            <div id="tab-photo" class="tab-content">
-                <div class="card">
-                    <h3>🖼️ AI Image Generator Prompt</h3>
-                    <p>फोटो के लिए अपना आईडिया लिखें:</p>
-                    <textarea id="photoPrompt" rows="3" placeholder="जैसे: Futuristic AI city at night, highly detailed..."></textarea>
-                    <button class="btn-primary" onclick="generatePhotoPrompt()">Generate Image Prompt</button>
-                </div>
-                <div class="card">
-                    <h3>✨ Prompt Result</h3>
-                    <div id="photoResult" class="result-box">यहाँ AI इमेज प्रॉम्प्ट आएगा...</div>
-                </div>
-            </div>
-
-            <div id="tab-voice" class="tab-content">
-                <div class="card">
-                    <h3>🎙️ AI Voice Greeting Generator</h3>
-                    <p>किसी देश के लिए वॉयस मैसेज बनाएं:</p>
-                    <select id="countrySelect">
-                        <option value="Switzerland">Switzerland 🇨🇭</option>
-                        <option value="Pakistan">Pakistan 🇵🇰</option>
-                        <option value="China">China 🇨🇳</option>
-                        <option value="Turkiye">Turkiye 🇹🇷</option>
-                    </select>
-                    <button class="btn-primary" onclick="generateVoiceGreeting()">Create AI Voice Text</button>
-                </div>
-                <div class="card">
-                    <h3>🔊 Speech Text</h3>
-                    <div id="voiceResult" class="result-box">यहाँ वॉयस मैसेज आएगा...</div>
-                </div>
-            </div>
+        <div class="profile">
+            👤 Guest User
         </div>
+    </aside>
 
-        <div class="nav-bar">
-            <div class="nav-item active" onclick="switchTab('video', this)">
-                <span class="nav-icon">🎥</span>
-                <span>Video</span>
+    <main class="main">
+
+        <header class="topbar">
+            <div class="model">NovaAI Assistant</div>
+            <div class="status">● Interface Preview</div>
+        </header>
+
+        <section class="chat-area" id="chatArea">
+
+            <div class="welcome" id="welcome">
+                <h1>What can I help you with?</h1>
+                <p>
+                    Welcome to NovaAI. Ask questions, learn something new,
+                    explore ideas and work on your projects.
+                </p>
             </div>
-            <div class="nav-item" onclick="switchTab('photo', this)">
-                <span class="nav-icon">🖼️</span>
-                <span>Photo</span>
+
+            <div class="messages" id="messages"></div>
+
+        </section>
+
+        <section class="input-section">
+            <div class="input-box">
+                <textarea
+                    id="userInput"
+                    placeholder="Message NovaAI..."
+                    rows="1"
+                    onkeydown="handleKey(event)"
+                ></textarea>
+
+                <button class="send-btn" onclick="sendMessage()">
+                    ↑
+                </button>
             </div>
-            <div class="nav-item" onclick="switchTab('voice', this)">
-                <span class="nav-icon">🎙️</span>
-                <span>Voice</span>
+
+            <div class="note">
+                NovaAI preview · AI service is not connected yet
             </div>
-        </div>
-    </div>
+        </section>
+
+    </main>
 </div>
 
 <script>
-    function handleLogin(e) {
-        e.preventDefault();
-        const email = document.getElementById('emailInput').value;
-        if(email) {
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('mainScreen').style.display = 'flex';
-        }
-    }
+const input = document.getElementById("userInput");
+const messages = document.getElementById("messages");
+const welcome = document.getElementById("welcome");
+const chatArea = document.getElementById("chatArea");
 
-    function handleLogout() {
-        document.getElementById('mainScreen').style.display = 'none';
-        document.getElementById('authScreen').style.display = 'flex';
-    }
+function addMessage(name, text, type) {
+    const message = document.createElement("div");
+    message.className = "message " + type;
 
-    function switchTab(tabName, el) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById('tab-' + tabName).classList.add('active');
-        el.classList.add('active');
-    }
+    const heading = document.createElement("div");
+    heading.className = "message-name";
+    heading.textContent = name;
 
-    function generateVideoPrompt() {
-        const topic = document.getElementById('videoTopic').value || "Scenic nature video";
-        document.getElementById('videoResult').innerText = "Scene 1: HD Shot of " + topic + "\nVoiceover: Welcome to an incredible journey!\nMusic: Cinematic background score.";
-    }
+    const content = document.createElement("div");
+    content.textContent = text;
 
-    function generatePhotoPrompt() {
-        const prompt = document.getElementById('photoPrompt').value || "Beautiful landscape";
-        document.getElementById('photoResult').innerText = "Ultra-realistic 8K image, photorealistic lighting, cinematic view of: " + prompt;
-    }
+    message.appendChild(heading);
+    message.appendChild(content);
+    messages.appendChild(message);
+}
 
-    function generateVoiceGreeting() {
-        const country = document.getElementById('countrySelect').value;
-        document.getElementById('voiceResult').innerText = "Welcome to " + country + "! Enjoy the breathtaking views and culture.";
+function sendMessage() {
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    welcome.style.display = "none";
+
+    addMessage("YOU", text, "user-message");
+
+    input.value = "";
+
+    addMessage(
+        "NOVAAI",
+        "Your message has appeared in the chat! The AI model is not connected yet. Our next step will be connecting a real AI service securely.",
+        "ai-message"
+    );
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function handleKey(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
     }
+}
+
+function newChat() {
+    messages.innerHTML = "";
+    welcome.style.display = "block";
+    input.value = "";
+}
 </script>
 
 </body>
-              </html>
-              
+</html>
